@@ -18,14 +18,14 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"ethan-jo.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.13.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ethan-jo.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.13.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"mac"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="问题背景最近碰到一个有趣的问题：  为测试极端情况下程序的健壮性，把 TCP 通信的设备拔掉网线&#x2F;断开电源后，连接程序并不能马上报警提示设备已断开，而是要过一段时间（经统计，大概为 15 分钟）才能断开，测试的系统是 Linux，发行版为 CentOS 7.9。">
+    <meta name="description" content="1. 问题背景最近碰到一个有趣的问题：  为测试极端情况下程序的健壮性，把 TCP 通信的设备拔掉网线&#x2F;断开电源后，连接程序并不能马上报警提示设备已断开，而是要过一段时间（经统计，大概为 15 分钟）才能断开，测试的系统是 Linux，发行版为 CentOS 7.9。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="TCP 机制引发设备状态异常解读">
 <meta property="og:url" content="https://ethan-jo.github.io/2022/05/23/tcp-exception-read/index.html">
 <meta property="og:site_name" content="Ethan Jo&#39;s Tech Blog">
-<meta property="og:description" content="问题背景最近碰到一个有趣的问题：  为测试极端情况下程序的健壮性，把 TCP 通信的设备拔掉网线&#x2F;断开电源后，连接程序并不能马上报警提示设备已断开，而是要过一段时间（经统计，大概为 15 分钟）才能断开，测试的系统是 Linux，发行版为 CentOS 7.9。">
+<meta property="og:description" content="1. 问题背景最近碰到一个有趣的问题：  为测试极端情况下程序的健壮性，把 TCP 通信的设备拔掉网线&#x2F;断开电源后，连接程序并不能马上报警提示设备已断开，而是要过一段时间（经统计，大概为 15 分钟）才能断开，测试的系统是 Linux，发行版为 CentOS 7.9。">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://ethan-jo.github.io/2022/05/23/tcp-exception-read/tcp-network-slow-1.png">
 <meta property="og:image" content="https://ethan-jo.github.io/2022/05/23/tcp-exception-read/tcp-network-slow-2.png">
@@ -124,7 +124,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E8%83%8C%E6%99%AF"><span class="nav-number">1.</span> <span class="nav-text">问题背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E8%B7%B5%E6%B5%8B%E8%AF%95"><span class="nav-number">2.</span> <span class="nav-text">实践测试</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90"><span class="nav-number">3.</span> <span class="nav-text">原理分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BD%91%E7%BA%BF%E9%87%8D%E6%8F%92"><span class="nav-number">3.1.</span> <span class="nav-text">网线重插</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8D%E6%8F%92%E7%BD%91%E7%BA%BF"><span class="nav-number">3.2.</span> <span class="nav-text">不插网线</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B6%85%E6%97%B6%E6%97%B6%E9%97%B4%E6%98%AF%E5%A4%9A%E5%B0%91"><span class="nav-number">3.3.</span> <span class="nav-text">超时时间是多少</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Linux"><span class="nav-number">3.3.1.</span> <span class="nav-text">Linux</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Windows"><span class="nav-number">3.3.2.</span> <span class="nav-text">Windows</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%80%E5%90%8E%E8%A1%A5%E5%85%85"><span class="nav-number">4.</span> <span class="nav-text">最后补充</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E8%83%8C%E6%99%AF"><span class="nav-text">1. 问题背景</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%9E%E8%B7%B5%E6%B5%8B%E8%AF%95"><span class="nav-text">2. 实践测试</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90"><span class="nav-text">3. 原理分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BD%91%E7%BA%BF%E9%87%8D%E6%8F%92"><span class="nav-text">3.1. 网线重插</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8D%E6%8F%92%E7%BD%91%E7%BA%BF"><span class="nav-text">3.2. 不插网线</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B6%85%E6%97%B6%E6%97%B6%E9%97%B4%E6%98%AF%E5%A4%9A%E5%B0%91"><span class="nav-text">3.3. 超时时间是多少</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Linux"><span class="nav-text">3.3.1. Linux</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Windows"><span class="nav-text">3.3.2. Windows</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9C%80%E5%90%8E%E8%A1%A5%E5%85%85"><span class="nav-text">4. 最后补充</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -139,18 +139,18 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">1</span>
+          <span class="site-state-item-count">2</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-count">2</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-count">2</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -261,7 +261,7 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h2 id="问题背景"><a href="#问题背景" class="headerlink" title="问题背景"></a>问题背景</h2><p>最近碰到一个有趣的问题：</p>
+        <h1 id="问题背景">1. 问题背景</h1><p>最近碰到一个有趣的问题：</p>
 <blockquote>
 <p>为测试极端情况下程序的健壮性，把 TCP 通信的设备拔掉网线&#x2F;断开电源后，连接程序并不能马上报警提示设备已断开，而是要过一段时间（经统计，大概为 15 分钟）才能断开，测试的系统是 Linux，发行版为 CentOS 7.9。 </p>
 </blockquote>
@@ -272,24 +272,24 @@
 <blockquote>
 <p>对端网线被拔掉后物理层就会断开，那么基于物理层的传输层也会断开，所以原本的 TCP 连接也不会存在了。就像我们打电话时，如果其中一方网络信号中断，那么本次通话就彻底断了。</p>
 </blockquote>
-<h2 id="实践测试"><a href="#实践测试" class="headerlink" title="实践测试"></a>实践测试</h2><p>从表现来看，并非像理论上理解那样：<code>对端网线被拔掉后物理层就会断开，那么基于物理层的传输层也会断开，所以原本的 TCP 连接也不会存在了。</code></p>
+<h1 id="实践测试">2. 实践测试</h1><p>从表现来看，并非像理论上理解那样：<code>对端网线被拔掉后物理层就会断开，那么基于物理层的传输层也会断开，所以原本的 TCP 连接也不会存在了。</code></p>
 <p>事实上拔掉对端网线并不影响传输层（TCP）通信，TCP 是操作系统实现的逻辑概念，与拔掉对端网线的物理动作并没有任何关联，对端由于物理层被切断也无法向你发送中断信号，因此也不会对现有 TCP 产生任何影响。</p>
 <p>为此，我在服务器上专门做了测试，首先正常启动客户端程序，提示设备连接成功并输出相应信息，此时查看服务器 TCP 连接情况如下：<br><img data-src="/2022/05/23/tcp-exception-read/tcp-network-slow-1.png"></p>
 <p>拔掉设备网线，再查看服务器 TCP 连接仍然保持连接：<br><img data-src="/2022/05/23/tcp-exception-read/tcp-network-slow-2.png"></p>
 <p>通过上面测试可以验证：<strong>拔掉对端网线并不会影响 TCP 连接状态，甚至拔掉本机网线也不会影响 TCP 连接状态。</strong></p>
-<h2 id="原理分析"><a href="#原理分析" class="headerlink" title="原理分析"></a>原理分析</h2><p>客户端调用 Sokect 向设备端发送报文时，并不是真的发送，而是将待发送内容写入系统 TCP  带发送缓存区域中，因此并不会直接报错。由于 TCP 协议具有可靠性设计，因此当设备端拔掉网线，客户端向设备发送的数据报文得不到任何响应时，在超过等待时长后，会触发 TCP 协议的超时重传机制，只不过此时重传也不能解决问题。</p>
-<h3 id="网线重插"><a href="#网线重插" class="headerlink" title="网线重插"></a>网线重插</h3><p>如果在重传报文的过程中，恰好把网线插回去了，由于拔掉网线并不会改变客户端的 TCP 连接状态，并且还是处于 ESTABLISHED 状态，所以这时客户端是可以正常接收服务端发来的数据报文的，然后客户端就会回 ACK 响应报文。</p>
+<h1 id="原理分析">3. 原理分析</h1><p>客户端调用 Sokect 向设备端发送报文时，并不是真的发送，而是将待发送内容写入系统 TCP  带发送缓存区域中，因此并不会直接报错。由于 TCP 协议具有可靠性设计，因此当设备端拔掉网线，客户端向设备发送的数据报文得不到任何响应时，在超过等待时长后，会触发 TCP 协议的超时重传机制，只不过此时重传也不能解决问题。</p>
+<h2 id="网线重插">3.1. 网线重插</h2><p>如果在重传报文的过程中，恰好把网线插回去了，由于拔掉网线并不会改变客户端的 TCP 连接状态，并且还是处于 ESTABLISHED 状态，所以这时客户端是可以正常接收服务端发来的数据报文的，然后客户端就会回 ACK 响应报文。</p>
 <p>此时，客户端和设备端的 TCP 连接将依然存在且工作状态不会受到影响，给应用层的感觉就像什么事情都没有发生，这就是 TCP 连接的可靠性设计。</p>
-<h3 id="不插网线"><a href="#不插网线" class="headerlink" title="不插网线"></a>不插网线</h3><p>如果在客户端 TCP 协议重传报文的过程中，设备端一直没有将网线插回去，那么客户端超时重传报文的次数达到一定阈值后，系统内核就会判定该 TCP 有问题。然后就会通过 Socket 接口告诉应用程序该 TCP 连接出问题了，于是客户端的 TCP 连接就会断开。</p>
-<h3 id="超时时间是多少"><a href="#超时时间是多少" class="headerlink" title="超时时间是多少"></a>超时时间是多少</h3><p>TCP 协议当数据发送失败时，会尝试重发，具体重发次数可以设定，如果重发不成功，会间隔一定时间再尝试，这个间隔时间被称作 RTO (Retransmission Timeouts), 一般情况下超时时间可以参考：<br><img data-src="/2022/05/23/tcp-exception-read/retransmission_timeout.png"><br>注意 RTO 时间是指数上升的，具体与操作系统内核实现有关，上图是一般情况的结果，可以发现重试 15 次后，第 16 次不成功的大概时间是 15 分钟，与问题反馈的情况一致。</p>
+<h2 id="不插网线">3.2. 不插网线</h2><p>如果在客户端 TCP 协议重传报文的过程中，设备端一直没有将网线插回去，那么客户端超时重传报文的次数达到一定阈值后，系统内核就会判定该 TCP 有问题。然后就会通过 Socket 接口告诉应用程序该 TCP 连接出问题了，于是客户端的 TCP 连接就会断开。</p>
+<h2 id="超时时间是多少">3.3. 超时时间是多少</h2><p>TCP 协议当数据发送失败时，会尝试重发，具体重发次数可以设定，如果重发不成功，会间隔一定时间再尝试，这个间隔时间被称作 RTO (Retransmission Timeouts), 一般情况下超时时间可以参考：<br><img data-src="/2022/05/23/tcp-exception-read/retransmission_timeout.png"><br>注意 RTO 时间是指数上升的，具体与操作系统内核实现有关，上图是一般情况的结果，可以发现重试 15 次后，第 16 次不成功的大概时间是 15 分钟，与问题反馈的情况一致。</p>
 <p>如果想修改这个值，Linux 和 Windows 具体方法如下：</p>
-<h4 id="Linux"><a href="#Linux" class="headerlink" title="Linux"></a>Linux</h4><p>在 Linux 系统中，提提供了一个叫 <em>tcp_retries2</em> 配置项，默认值是 15</p>
+<h3 id="Linux">3.3.1. Linux</h3><p>在 Linux 系统中，提提供了一个叫 <em>tcp_retries2</em> 配置项，默认值是 15</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">可用此命令查看</span></span><br><span class="line">cat /proc/sys/net/ipv4/tcp_retries2</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">或者</span></span><br><span class="line">sysctl -a | grep tcp_retries2</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">修改</span></span><br><span class="line">sysctl -w net.ipv4.tcp_retries2=5</span><br></pre></td></tr></table></figure>
 
-<h4 id="Windows"><a href="#Windows" class="headerlink" title="Windows"></a>Windows</h4><p>Windows 系统中 TCP&#x2F;IP 相关参数配置在下面注册表键中</p>
+<h3 id="Windows">3.3.2. Windows</h3><p>Windows 系统中 TCP&#x2F;IP 相关参数配置在下面注册表键中</p>
 <figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">HKEY_LOCAL_MACHINE</span><br><span class="line">     \SYSTEM</span><br><span class="line">          \CurrentControlSet</span><br><span class="line">               \Services:</span><br><span class="line">                    \Tcpip</span><br><span class="line">                         \Parameters</span><br><span class="line">	                         \TcpMaxDataRetransmissions     #default 5</span><br></pre></td></tr></table></figure>
 <p>详情可查看<a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2003/cc739819(v=ws.10)?Redirectedfrom=MSDN#tcpmaxdataretransmissions">这里</a></p>
-<h2 id="最后补充"><a href="#最后补充" class="headerlink" title="最后补充"></a>最后补充</h2><p>需要注意的是上面讨论的是：<code>设备断开网线后，有数据传输的场景</code>。那么没有数据传输时会如何处理？实际上 TCP 协议在设计时设计了 KeepAlive 机制。</p>
+<h1 id="最后补充">4. 最后补充</h1><p>需要注意的是上面讨论的是：<code>设备断开网线后，有数据传输的场景</code>。那么没有数据传输时会如何处理？实际上 TCP 协议在设计时设计了 KeepAlive 机制。</p>
 <p><strong>如果没有开启 TCP KeepAlive 机制：</strong><br>在客户端拔掉网线后，并且双方都没有进行数据传输，那么客户端和服务端的 TCP 连接将会一直保持存在。</p>
 <p><strong>如果开启了 TCP KeepAlive 机制：</strong><br>在客户端拔掉网线后，即使双方都没有进行数据传输，在持续一段时间后，TCP 就会发送 KeepAlive 探测报文。  </p>
 <p>根据 KeepAlive 探测报文响应情况，会有以下两种可能：</p>
@@ -312,6 +312,15 @@
 
         
 
+          <div class="post-nav">
+            <div class="post-nav-item">
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/01/07/Sonarqube%E7%B3%BB%E5%88%9701%EF%BC%9ASonarqube%E7%AE%80%E4%BB%8B%E5%8F%8A%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/" rel="next" title="Sonarqube系列01：Sonarqube 简介及安装">
+                  Sonarqube系列01：Sonarqube 简介及安装 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
     </footer>
   </article>
 </div>
@@ -342,13 +351,13 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-line"></i>
     </span>
-    <span title="站点总字数">2k</span>
+    <span title="站点总字数">6k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">2 分钟</span>
+    <span title="站点阅读时长">6 分钟</span>
   </span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动

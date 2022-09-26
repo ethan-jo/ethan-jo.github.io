@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.lug.ustc.edu.cn/css?family=Noto+Serif+SC:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"ethan-jo.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.13.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"mac"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="1. Sonarqube 简介Sonarqube 是一个开源的代码质量监测与管理软件，能够检测出不规范的代码，分析代码中的漏洞、单元测试覆盖率等。Sonarqube 主要特点如下：  支持 java、C#、Go、Python、Ruby、JavaScript、Kotlin 等二十多种语言； 能够发现代码中可能隐含的 bug、安全隐患 (vulnerability)、不规范代码 (Code Smell">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Sonarqube系列01：Sonarqube 简介及安装">
+<meta property="og:url" content="https://ethan-jo.github.io/2022/01/07/Sonarqube%E7%B3%BB%E5%88%9701%EF%BC%9ASonarqube%E7%AE%80%E4%BB%8B%E5%8F%8A%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/index.html">
+<meta property="og:site_name" content="Ethan Jo&#39;s Tech Blog">
+<meta property="og:description" content="1. Sonarqube 简介Sonarqube 是一个开源的代码质量监测与管理软件，能够检测出不规范的代码，分析代码中的漏洞、单元测试覆盖率等。Sonarqube 主要特点如下：  支持 java、C#、Go、Python、Ruby、JavaScript、Kotlin 等二十多种语言； 能够发现代码中可能隐含的 bug、安全隐患 (vulnerability)、不规范代码 (Code Smell">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ethan-jo.github.io/assets/img-1.png">
+<meta property="og:image" content="https://ethan-jo.github.io/assets/img-3.png">
+<meta property="article:published_time" content="2022-01-07T14:55:10.000Z">
+<meta property="article:modified_time" content="2022-01-07T14:55:10.000Z">
+<meta property="article:author" content="Ethan Jo">
+<meta property="article:tag" content="Sonarqube">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ethan-jo.github.io/assets/img-1.png">
+
+
+<link rel="canonical" href="https://ethan-jo.github.io/2022/01/07/Sonarqube%E7%B3%BB%E5%88%9701%EF%BC%9ASonarqube%E7%AE%80%E4%BB%8B%E5%8F%8A%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://ethan-jo.github.io/2022/01/07/Sonarqube%E7%B3%BB%E5%88%9701%EF%BC%9ASonarqube%E7%AE%80%E4%BB%8B%E5%8F%8A%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/","path":"2022/01/07/Sonarqube系列01：Sonarqube简介及安装教程/","title":"Sonarqube系列01：Sonarqube 简介及安装"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Sonarqube系列01：Sonarqube 简介及安装 | Ethan Jo's Tech Blog</title>
+  
+
+  <script src="/js/third-party/analytics/baidu-analytics.js"></script>
+  <script async src="https://hm.baidu.com/hm.js?520daa04da03ba1bfa4fda236ee44346"></script>
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Ethan Jo's Tech Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">云水一舟天地间</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Sonarqube-%E7%AE%80%E4%BB%8B"><span class="nav-text">1. Sonarqube 简介</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%A4%E8%AF%86-Sonarqube"><span class="nav-text">1.1. 认识 Sonarqube</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Sonarqube-%E5%8A%9F%E8%83%BD"><span class="nav-text">1.2. Sonarqube 功能</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Sonarqube-%E5%AE%89%E8%A3%85"><span class="nav-text">2. Sonarqube 安装</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E7%BD%AE%E6%9D%A1%E4%BB%B6"><span class="nav-text">2.1. 前置条件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#JDK-11"><span class="nav-text">2.1.1. JDK 11</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PostgreSQL"><span class="nav-text">2.1.2. PostgreSQL</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%89%E8%A3%85"><span class="nav-text">2.1.2.1. 安装</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BB%BA%E5%BA%93"><span class="nav-text">2.1.2.2. 建库</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0%E5%85%B6%E4%BB%96%E8%AE%BE%E5%A4%87%E8%AE%BF%E9%97%AE"><span class="nav-text">2.1.2.3. 添加其他设备访问</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CentOS-%E7%B3%BB%E7%BB%9F%E9%85%8D%E7%BD%AE"><span class="nav-text">2.1.3. CentOS 系统配置</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Sonarqube-%E5%AE%89%E8%A3%85-1"><span class="nav-text">2.2. Sonarqube 安装</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE"><span class="nav-text">2.2.1. 配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%87%E6%8D%A2%E7%8B%AC%E7%AB%8B%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="nav-text">2.2.1.1. 切换独立数据库</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0%E5%90%AF%E5%8A%A8%E8%B4%A6%E5%8F%B7"><span class="nav-text">2.2.1.2. 添加启动账号</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8"><span class="nav-text">2.2.2. 启动</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8F%92%E4%BB%B6"><span class="nav-text">2.2.3. 插件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0%E4%B8%BA%E6%9C%8D%E5%8A%A1"><span class="nav-text">2.2.4. 添加为服务</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%90%8E%E8%AE%B0"><span class="nav-text">3. 后记</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Ethan Jo"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Ethan Jo</p>
+  <div class="site-description" itemprop="description">这里是 Ethan Jo 原创个人技术博客。专注于Java后端开发、运维工程化、软件工程师职业发展，致力于成为架构师。</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">2</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ethan-jo.github.io/2022/01/07/Sonarqube%E7%B3%BB%E5%88%9701%EF%BC%9ASonarqube%E7%AE%80%E4%BB%8B%E5%8F%8A%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Ethan Jo">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Ethan Jo's Tech Blog">
+      <meta itemprop="description" content="这里是 Ethan Jo 原创个人技术博客。专注于Java后端开发、运维工程化、软件工程师职业发展，致力于成为架构师。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Sonarqube系列01：Sonarqube 简介及安装 | Ethan Jo's Tech Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Sonarqube系列01：Sonarqube 简介及安装
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-01-07 22:55:10" itemprop="dateCreated datePublished" datetime="2022-01-07T22:55:10+08:00">2022-01-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Devops/" itemprop="url" rel="index"><span itemprop="name">Devops</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>4.6k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>4 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="Sonarqube-简介">1. Sonarqube 简介</h1><p>Sonarqube 是一个开源的代码质量监测与管理软件，能够检测出不规范的代码，分析代码中的漏洞、单元测试覆盖率等。Sonarqube 主要特点如下：</p>
+<ul>
+<li>支持 java、C#、Go、Python、Ruby、JavaScript、Kotlin 等二十多种语言；</li>
+<li>能够发现代码中可能隐含的 bug、安全隐患 (vulnerability)、不规范代码 (Code Smells)；<span id="more"></span></li>
+<li>可以对开发代码进行持续分析，能够查看各种数值的历史走向；</li>
+<li>具有极高的可定制性，可以通过插件扩展分析能力，可以定制更严格或宽松的质量阀门 (Quality Gate) 及 Quality Profile； </li>
+<li>支持基于团队、角色的权限管理；</li>
+<li>与主流代码仓库（Github、Gitlab）集成。</li>
+</ul>
+<blockquote>
+<p>Sonarqube 官网: <a target="_blank" rel="noopener" href="http://www.sonar.org.cn/">http://www.sonar.org.cn/</a></p>
+</blockquote>
+<h2 id="认识-Sonarqube">1.1. 认识 Sonarqube</h2><p>Sonarqube 基于 web 访问，无需安装客户端。具有版本控制，提供多用户、多角色管理。</p>
+<p>Sonarqube 实例包括三个组件：<br><img data-src="/assets/img-1.png" alt="e31c17be8396dd3e1cf76502e3d654f3.png"></p>
+<ol>
+<li>Sonarqube server 提供质量管理服务，主要包括：<ul>
+<li>Web Server 用来提供用户界面</li>
+<li>Search Server 基于 ES 的搜索服务</li>
+<li>Compute Engine 负责处理代码分析报告，并将其保存在数据库中的计算引擎</li>
+</ul>
+</li>
+<li>Database 存储相关数据：<ul>
+<li>代码扫描期间生成的代码质量和安全性指标和问题</li>
+<li>Sonarqube 实例配置</li>
+</ul>
+</li>
+<li>Sonar Scanner 扫描分析代码问题</li>
+</ol>
+<h2 id="Sonarqube-功能">1.2. Sonarqube 功能</h2><p>Sonarqube 的主要功能是进行代码质量检测，检测的内容包括如下几点：</p>
+<ul>
+<li>不遵循规范的代码：使用 PMD、CheckStyle、Findbugs 等代码规则检测工具规范代码编写。</li>
+<li>潜在缺陷：使用 PMD、CheckStyle、Findbugs 等检测潜在缺陷。</li>
+<li>复杂度分布：检测文件、类、方法的复杂度，防止复杂度过高导致维护困难。</li>
+<li>重复代码：检测代码中复制粘贴的重复代码。</li>
+<li>注释过多或不足：分析代码注释，提示注释过多和缺少注释的代码。</li>
+<li>单元测试覆盖率：统计并展示单元测试的覆盖率。</li>
+<li>检测耦合：能够找出循环，展示包与包、类与类之间的依赖关系。</li>
+<li>提高代码质量：了解编码过程中犯过的错误，让自己的代码更有可读性和维护性。</li>
+</ul>
+<h1 id="Sonarqube-安装">2. Sonarqube 安装</h1><p>Sonar 提供的代码质量检测软件名称叫 Sonarqube，官方提供了四个版本，分别是社区版、开发者版、企业版、数据中心版，其中社区版可免费使用。本指南使用的是 8.9LTS 社区版。</p>
+<h2 id="前置条件">2.1. 前置条件</h2><p>Sonarqube 需要提前预装 Java 和数据库，8.9LTS 支持 JDK 最低版本 11，数据库支持 PostgreSQL、Microsoft SQL Server、Oracle，详细要求见<a target="_blank" rel="noopener" href="https://docs.sonarqube.org/8.9/requirements/requirements/">这里</a>。<br>本次安装选用 OpenJDK 11、ostgreSQL 12 以及 CentOS 7。</p>
+<h3 id="JDK-11">2.1.1. JDK 11</h3><p>首先搜索可安装的 jdk</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum search java-11</span><br></pre></td></tr></table></figure>
+<p>从结果中可以找到两个条目</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">java-11-openjdk.x86_64 : OpenJDK Runtime Environment 11</span><br><span class="line">java-11-openjdk-devel.x86_64 : OpenJDK Development Environment 11</span><br></pre></td></tr></table></figure>
+<p>分别是 JRE 和 JDK，根据你的需求安装即可，比如这里安装的是 JRE</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install java-11-openjdk.x86_64</span><br></pre></td></tr></table></figure>
+<p>安装目录为</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/lib/jvm/jre-11-openjdk-11.0.13.0.8-1.el7_9.x86_64</span><br></pre></td></tr></table></figure>
+<p>查看版本信息</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">java -version</span></span><br><span class="line"></span><br><span class="line">openjdk version &quot;11.0.1&quot; 2018-10-16 LTS</span><br><span class="line">OpenJDK Runtime Environment 18.9 (build 11.0.1+13-LTS)</span><br><span class="line">OpenJDK 64-Bit Server VM 18.9 (build 11.0.1+13-LTS, mixed mode, sharing)</span><br></pre></td></tr></table></figure>
+
+<h3 id="PostgreSQL">2.1.2. PostgreSQL</h3><h4 id="安装">2.1.2.1. 安装</h4><p>官方支持通过 yum 方式安装，安装前需根据系统和安装版本添加 yum 源进行安装。打开<a target="_blank" rel="noopener" href="https://www.postgresql.org/download">官网下载地址</a>，选择安装版本、操作系统、架构等信息，自动生成安装脚本如下图所示：<br><img data-src="/assets/img-3.png" alt="b1d4ba72bb38079e651e5db9d52352d8.png"><br>依次执行脚本完成安装，通过下面命令查看版本信息。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"> psql --version</span></span><br><span class="line">psql (PostgreSQL) 12.7</span><br></pre></td></tr></table></figure>
+
+<h4 id="建库">2.1.2.2. 建库</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">#切换用户</span><br><span class="line">su postgres</span><br><span class="line">#进入命令行模式，需输入密码</span><br><span class="line">psql</span><br><span class="line">#创建数据库及账号</span><br><span class="line"><span class="keyword">create</span> database sonar;</span><br><span class="line"><span class="keyword">create</span> <span class="keyword">user</span> sonar;</span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">user</span> sonar <span class="keyword">with</span> password <span class="string">&#x27;postgres#345&#x27;</span>;</span><br><span class="line"><span class="keyword">alter</span> role sonar createdb;</span><br><span class="line"><span class="keyword">alter</span> role sonar superuser;</span><br><span class="line"><span class="keyword">alter</span> role sonar createrole;</span><br><span class="line"><span class="keyword">alter</span> database sonar owner <span class="keyword">to</span> sonar;</span><br></pre></td></tr></table></figure>
+
+<h4 id="添加其他设备访问">2.1.2.3. 添加其他设备访问</h4><p>PostgreSQL 安装完成后，默认是只接受来在本机 localhost 的连接请求。需修改配置允许数据库服务器监听来自任何主机的连接请求。配置文件默认在安装目录下的 <code>data</code> 文件夹。</p>
+<p><em><strong>postgresql. Conf</strong></em><br>定位到 <code>#listen_addresses=&#39;localhost&#39;</code>，将行开头的#去掉，将行内容修改为 <code>listen_addresses=&#39;*&#39;</code>。</p>
+<blockquote>
+<p>Listen_addresses&#x3D;’*’</p>
+</blockquote>
+<p><em><strong>pg_hba. Conf</strong></em><br>配置用户的访问权限，添加服务端允许的认证方式。</p>
+<blockquote>
+<p>Host all all 0.0.0.0&#x2F;0 md5</p>
+</blockquote>
+<p>重启服务</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl restart postgresql</span><br></pre></td></tr></table></figure>
+
+<h3 id="CentOS-系统配置">2.1.3. CentOS 系统配置</h3><p>在 Linux 平台运行，需要确保：</p>
+<ul>
+<li><code>vm.max_map_count</code> &gt;&#x3D;524288</li>
+<li><code>fs.file-max</code> &gt;&#x3D;131072</li>
+<li>运行用户至少可以打开 131072 文件描述符</li>
+<li>运行用户至少可以打开 8192 线程</li>
+</ul>
+<p>可以通过如下命令确认系统设置的值：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sysctl vm.max_map_count</span><br><span class="line">sysctl fs.file-max</span><br><span class="line">ulimit -n</span><br><span class="line">ulimit -u</span><br></pre></td></tr></table></figure>
+<p>临时生效可以用 <code>root</code> 运行：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sysctl -w vm.max_map_count=524288</span><br><span class="line">sysctl -w fs.file-max=131072</span><br><span class="line">ulimit -n 131072</span><br><span class="line">ulimit -u 8192</span><br></pre></td></tr></table></figure>
+<p>为保证重启依然生效，修改 <code>/etc/sysctl.conf</code>，添加如下内容：</p>
+<blockquote>
+<p>Vm. Max_map_count&#x3D;524288<br>Fs. File-max &#x3D; 131072</p>
+</blockquote>
+<p>修改 <code>/etc/security/limits.conf</code>，添加如下内容：</p>
+<blockquote>
+<p>*   soft   nofile   131072<br>*   hard   nofile   131072<br>*   soft   nproc    8192<br>*   soft   nproc    8192</p>
+</blockquote>
+<h2 id="Sonarqube-安装-1">2.2. Sonarqube 安装</h2><blockquote>
+<p>Sonarqube 下载地址：<a target="_blank" rel="noopener" href="https://www.sonarqube.org/downloads/">https://www.Sonarqube.org/downloads/</a></p>
+</blockquote>
+<p>Sonarqube 提供 docker 和 zip 安装包两种方式，这里使用安装包方式进行安装。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">wget https://binaries.sonarsource.com/Distribution/Sonarqube/Sonarqube-8.9.3.48735.zip</span><br><span class="line">unzip Sonarqube-8.9.3.48735.zip</span><br></pre></td></tr></table></figure>
+
+<h3 id="配置">2.2.1. 配置</h3><h4 id="切换独立数据库">2.2.1.1. 切换独立数据库</h4><p>Sonarqube 默认启动使用内嵌 <code>H2</code> 数据库，进去后会提示内嵌数据库只用于测试环境，无法支持升级到版本，因此需要替换为 <code>postgreSQL</code><br>切换到 Sonarqube 根目录，编辑配置文件 <code>conf/sonar.properties</code>，依次修改如下配置</p>
+<blockquote>
+<p>Sonar. Jdbc. Username&#x3D;sonar<br>Sonar. Jdbc. Password&#x3D;postgres#345<br>Sonar. Jdbc. Url&#x3D;jdbc :postgresql: &#x2F;&#x2F;localhost&#x2F;sonar</p>
+</blockquote>
+<h4 id="添加启动账号">2.2.1.2. 添加启动账号</h4><p>Sonarqube 需要非 root 账号启动，添加专用用户，并修改文件权限。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">adduser sonar</span><br><span class="line">chown sonar:sonar -R Sonarqube-8.9.3.48735</span><br></pre></td></tr></table></figure>
+<p>为方便管理，可将 sonar 启动管理脚本添加快捷方式，编辑 <code>/home/sonar/.bashrc</code>，添加如下内容：</p>
+<blockquote>
+<p>Alias sonar&#x3D;’%{SONAR_QUBE_HOME}&#x2F;bin&#x2F;linux-x86-64&#x2F;sonar. Sh’</p>
+</blockquote>
+<h3 id="启动">2.2.2. 启动</h3><p>使用启动账号，通过命令启动服务。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">su sonar</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">启动</span></span><br><span class="line">sonar start</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">停止</span></span><br><span class="line">sonar stop</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">重启</span></span><br><span class="line">sonar restart</span><br></pre></td></tr></table></figure>
+<p>启动后，使用浏览器访问 <code>http://yourip:9000</code>，刚启动时需要等待 Sonarqube 进行初始化，随后进入登录界面，使用默认账号 <code>admin</code> 密码 <code>admin</code> 登录，修改密码后，开始使用 Sonarqube。</p>
+<h3 id="插件">2.2.3. 插件</h3><p>Sonarqube 有丰富的生态环境，支持通过各种插件来增强社区版的能力，实现用户的业务场景需求。<br>通常情况下，可以通过以下两种方式安装插件：</p>
+<ol>
+<li><strong>插件市场</strong>——社区版可通过 Marketplace 进行自动安装，安装完成后需要重启 Sonarqube。（选择 <strong>Administration</strong> 菜单，再点击 <strong>Marketplace</strong> 子菜单）</li>
+<li><strong>手动安装</strong>——如果安装服务器无法上网或者插件无法在市场中找到，可通过手动进行安装。（下载插件，拷贝至 <code>$Sonarqube_HOME/extensions/plugins</code> 目录重启即可，需要注意同一个插件保留最新版本即可）</li>
+</ol>
+<p>常用的插件及安装方法如下：<br><strong>中文界面</strong></p>
+<blockquote>
+<p>Sonarqube 默认界面为英文，可安装中文包，方便使用。<br>在插件市场搜索栏中搜索 <code>Chinese Pack</code> ，点击安装</p>
+</blockquote>
+<p><strong>Community Branch Plugin</strong><br>社区版不支持多分支扫描，可通过 <code>Sonarqube-community-branch-plugin</code>，实现多分支代码扫描，扫描时指定分支参数即可，例如：<code>-Dsonar.branch.name=dev</code>，<a target="_blank" rel="noopener" href="https://github.com/mc1arke/Sonarqube-community-branch-plugin">插件地址</a></p>
+<blockquote>
+<ol>
+<li>官网下载对应版本插件，拷贝 jar 文件到 Sonarqube 实例下的 <code>extensions/plugins/</code> 目录</li>
+<li>编辑配置文件 <code>config/sonar.properties</code>，添加如下内容，注意版本信息<br>sonar. Web. JavaAdditionalOpts&#x3D;-javaagent:.&#x2F;extensions&#x2F;plugins&#x2F;Sonarqube-community-branch-plugin-1.8.1. Jar&#x3D;web<br>sonar. Ce. JavaAdditionalOpts&#x3D;-javaagent:.&#x2F;extensions&#x2F;plugins&#x2F;Sonarqube-community-branch-plugin-1.8.1. Jar&#x3D;ce</li>
+</ol>
+</blockquote>
+<p><strong>Findbugs</strong><br>Findbugs java 代码质量检查  <a target="_blank" rel="noopener" href="http://findbugs.sourceforge.net/">官网</a></p>
+<blockquote>
+<p>在插件市场搜索栏中搜索 <code>Findbugs</code> ，点击安装</p>
+</blockquote>
+<p><strong>PMD-P3C</strong><br><a target="_blank" rel="noopener" href="https://pmd.github.io/">PMD</a> 代码质量检查，支持 Java, JavaScript, Salesforce. Com Apex and Visualforce, PLSQL, Apache Velocity, XML, XSL<br><a target="_blank" rel="noopener" href="https://github.com/alibaba/p3c">P3C</a> 是阿里巴巴出品的 Java 编程规范<br>官方没提供实现，社区整合插件地址见<a target="_blank" rel="noopener" href="https://github.com/caowenliang/sonar-pmd-p3c">这里</a></p>
+<p><strong>C++</strong><br>社区版默认没有 C++插件，通过安装开源插件 <code>sonar-cxx</code> 实现支持，<a target="_blank" rel="noopener" href="https://github.com/SonarOpenCommunity/sonar-cxx">插件地址</a></p>
+<h3 id="添加为服务">2.2.4. 添加为服务</h3><p>创建文件 <code>/etc/systemd/system/Sonarqube.service</code>，写入服务脚本内容，注意替换 Java 路径、Sonarqube 路径以及执行用户和用户组</p>
+<blockquote>
+<p>[Unit]<br>Description&#x3D;Sonarqube service<br>After&#x3D;syslog. Target network. Target</p>
+<p>[Service]<br>Type&#x3D;simple<br>User&#x3D;sonar<br>Group&#x3D;sonar<br>PermissionsStartOnly&#x3D;true<br>ExecStart&#x3D;&#x2F;usr&#x2F;bin&#x2F;java -Xms32m -Xmx32m -Djava. Net. PreferIPv4Stack&#x3D;true -jar &#x2F;home&#x2F;local&#x2F;Sonarqube-8.9.3.48735&#x2F;lib&#x2F;sonar-application-8.9.3.48735. Jar<br>StandardOutput&#x3D;syslog<br>LimitNOFILE&#x3D;131072<br>LimitNPROC&#x3D;8192<br>TimeoutStartSec&#x3D;5<br>Restart&#x3D;always<br>SuccessExitStatus&#x3D;143</p>
+<p>[Install]<br>WantedBy&#x3D;multi-user. Target</p>
+</blockquote>
+<p>添加并启动服务</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl enable Sonarqube.service</span><br><span class="line">sudo systemctl start Sonarqube.service</span><br></pre></td></tr></table></figure>
+
+<h1 id="后记">3. 后记</h1><p>常规情况下按照以上指南可以顺利完成 Sonarqube 搭建，实际操作过程中有些特殊情况需要注意。</p>
+<p><strong>1. 提示启动成功，服务无法访问</strong></p>
+<blockquote>
+<p>操作过程中遇到 2 种情况：</p>
+<ol>
+<li>检查启动账号是否为专用账号，因为 Sonarqube 依赖 es，而 es 需要非 root 用户启动</li>
+<li>操作系统参数限制导致，详细参考<em>1.3 CentOS</em></li>
+</ol>
+<p>其他情况，可到 logs&#x2F;sonar. Log 检查日志信息，排查启动出错原因。</p>
+</blockquote>
+<p><strong>2. 插件市场安装失败</strong></p>
+<blockquote>
+<p>大概率是网络问题，如果有科学上网，可设置代理后再尝试，或者也可以通过插件市场的插件主页查找离线下载方式手动安装。</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Sonarqube/" rel="tag"># Sonarqube</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/05/23/tcp-exception-read/" rel="prev" title="TCP 机制引发设备状态异常解读">
+                  <i class="fa fa-chevron-left"></i> TCP 机制引发设备状态异常解读
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2016 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ethan Jo</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">6k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">6 分钟</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/next-theme-pjax/0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/pjax.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"ethan-jo/ethan-jo.github.io","issue_term":"title","theme":"preferred-color-scheme"}</script>
+<script src="/js/third-party/comments/utterances.js"></script>
+
+</body>
+</html>
