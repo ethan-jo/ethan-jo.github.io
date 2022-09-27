@@ -22,28 +22,28 @@
 
     <meta name="description" content="在开始具体代码的质量分析之前，还需要理解 Sonarqube 的工作流程才能更好的使用它。在这章内容中将详细介绍它的工作原理以及理解所需的概念。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Sonarqube系列01：Sonarqube 简介及安装">
-<meta property="og:url" content="https://ethan-jo.github.io/2022/01/07/Sonarqube%E7%B3%BB%E5%88%9702%EF%BC%9A%E6%9B%B4%E5%A5%BD%E5%9C%B0%E7%90%86%E8%A7%A3Sonarqube/index.html">
+<meta property="og:title" content="Sonarqube系列02：深入理解Sonarqube工作原理及概念">
+<meta property="og:url" content="https://ethan-jo.github.io/2022/01/14/Sonarqube%E7%B3%BB%E5%88%9702%EF%BC%9A%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Sonarqube%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86%E5%8F%8A%E6%A6%82%E5%BF%B5/index.html">
 <meta property="og:site_name" content="Ethan Jo&#39;s Tech Blog">
 <meta property="og:description" content="在开始具体代码的质量分析之前，还需要理解 Sonarqube 的工作流程才能更好的使用它。在这章内容中将详细介绍它的工作原理以及理解所需的概念。">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://ethan-jo.github.io/assets/img-1.png">
-<meta property="article:published_time" content="2022-01-07T14:55:10.000Z">
-<meta property="article:modified_time" content="2022-01-07T14:55:10.000Z">
+<meta property="article:published_time" content="2022-01-14T14:55:10.000Z">
+<meta property="article:modified_time" content="2022-01-14T14:55:10.000Z">
 <meta property="article:author" content="Ethan Jo">
 <meta property="article:tag" content="Sonarqube">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://ethan-jo.github.io/assets/img-1.png">
 
 
-<link rel="canonical" href="https://ethan-jo.github.io/2022/01/07/Sonarqube%E7%B3%BB%E5%88%9702%EF%BC%9A%E6%9B%B4%E5%A5%BD%E5%9C%B0%E7%90%86%E8%A7%A3Sonarqube/">
+<link rel="canonical" href="https://ethan-jo.github.io/2022/01/14/Sonarqube%E7%B3%BB%E5%88%9702%EF%BC%9A%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Sonarqube%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86%E5%8F%8A%E6%A6%82%E5%BF%B5/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://ethan-jo.github.io/2022/01/07/Sonarqube%E7%B3%BB%E5%88%9702%EF%BC%9A%E6%9B%B4%E5%A5%BD%E5%9C%B0%E7%90%86%E8%A7%A3Sonarqube/","path":"2022/01/07/Sonarqube系列02：更好地理解Sonarqube/","title":"Sonarqube系列01：Sonarqube 简介及安装"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://ethan-jo.github.io/2022/01/14/Sonarqube%E7%B3%BB%E5%88%9702%EF%BC%9A%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Sonarqube%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86%E5%8F%8A%E6%A6%82%E5%BF%B5/","path":"2022/01/14/Sonarqube系列02：深入理解Sonarqube工作原理及概念/","title":"Sonarqube系列02：深入理解Sonarqube工作原理及概念"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>Sonarqube系列01：Sonarqube 简介及安装 | Ethan Jo's Tech Blog</title>
+<title>Sonarqube系列02：深入理解Sonarqube工作原理及概念 | Ethan Jo's Tech Blog</title>
   
 
   <script src="/js/third-party/analytics/baidu-analytics.js"></script>
@@ -122,7 +122,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="nav-text">1. 工作原理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E7%BB%84%E4%BB%B6%E5%9B%BE"><span class="nav-text">1.1. 系统组件图</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%90%86%E8%A7%A3%E8%A6%81%E7%82%B9"><span class="nav-text">1.2. 理解要点</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A6%82%E5%BF%B5"><span class="nav-text">2. 概念</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5"><span class="nav-text">2.1. 核心概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%90%86%E8%A7%A3%E6%A6%82%E5%BF%B5"><span class="nav-text">2.2. 理解概念</span></a></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="nav-text">1. 工作原理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E7%BB%84%E4%BB%B6%E5%9B%BE"><span class="nav-text">1.1. 系统组件图</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%90%86%E8%A7%A3%E8%A6%81%E7%82%B9"><span class="nav-text">1.2. 理解要点</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A6%82%E5%BF%B5"><span class="nav-text">2. 概念</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5"><span class="nav-text">2.1. 核心概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%90%86%E8%A7%A3%E6%A6%82%E5%BF%B5"><span class="nav-text">2.2. 理解概念</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%86%99%E5%9C%A8%E6%9C%80%E5%90%8E"><span class="nav-text">3. 写在最后</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -187,7 +187,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://ethan-jo.github.io/2022/01/07/Sonarqube%E7%B3%BB%E5%88%9702%EF%BC%9A%E6%9B%B4%E5%A5%BD%E5%9C%B0%E7%90%86%E8%A7%A3Sonarqube/">
+    <link itemprop="mainEntityOfPage" href="https://ethan-jo.github.io/2022/01/14/Sonarqube%E7%B3%BB%E5%88%9702%EF%BC%9A%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Sonarqube%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86%E5%8F%8A%E6%A6%82%E5%BF%B5/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
@@ -200,12 +200,12 @@
     </span>
 
     <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="Sonarqube系列01：Sonarqube 简介及安装 | Ethan Jo's Tech Blog">
+      <meta itemprop="name" content="Sonarqube系列02：深入理解Sonarqube工作原理及概念 | Ethan Jo's Tech Blog">
       <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Sonarqube系列01：Sonarqube 简介及安装
+          Sonarqube系列02：深入理解Sonarqube工作原理及概念
         </h1>
 
         <div class="post-meta-container">
@@ -216,7 +216,7 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2022-01-07 22:55:10" itemprop="dateCreated datePublished" datetime="2022-01-07T22:55:10+08:00">2022-01-07</time>
+      <time title="创建时间：2022-01-14 22:55:10" itemprop="dateCreated datePublished" datetime="2022-01-14T22:55:10+08:00">2022-01-14</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -234,7 +234,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>1.9k</span>
+      <span>2k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
@@ -338,19 +338,17 @@
 <td>Token</td>
 <td>审查项目时所用授权验证</td>
 </tr>
-<tr>
-<td>除此之外，还有其他的概念，可以查看<a target="_blank" rel="noopener" href="https://docs.sonarqube.org/8.9/user-guide/concepts/">这里</a>。</td>
-<td></td>
-</tr>
 </tbody></table>
-<h2 id="理解概念">2.2. 理解概念</h2><p>这里总结了一些对理解概念有帮助的要点，帮助你更好理解这些概念：</p>
+<p>除此之外，还有其他的概念，可以查看<a target="_blank" rel="noopener" href="https://docs.sonarqube.org/8.9/user-guide/concepts/">这里</a>。</p>
+<h2 id="理解概念">2.2. 理解概念</h2><p>这里总结了对概念理解有帮助的要点，帮助你更快理解。</p>
 <ol>
-<li>Sonarqube 代码自动审查的问题类型主要包括：Bug、Vulnerability、Security Hotspot 、Code Smell 。</li>
-<li>审查问题的依据是根据编程语言设定的规则（Rule），为了方便通常把一组规则组合到一起称为质量配置（Quality Profile ）。</li>
-<li>如果审查结果不满足质量门（Quality Gate）的要求，则会判定审查结果失败，可以利用这个特性配合 CI 工具实现自动化机器审查。</li>
-<li>针对一个项目（Project），可以单独设置质量配置（Quality Profile）、质量门（Quality Gate）、授权验证（Token），当然也可以使用默认的配置。</li>
-<li>针对项目（Project）的一次扫描将会生成一个质量快照（Snapshot），快照包含了审查问题以及其对应的修复成本（Remediation Cost）和技术债务（Technical Debt），修复成本和技术债务是在规则（Rule）中预定义的，并不是 AI 智能动态计算的。</li>
+<li>Sonarqube 代码审查的问题类型主要包括：错误（Bug）、漏洞（Vulnerability）、安全热点（Security Hotspot）、代码异味（Code Smell） 。</li>
+<li>审查问题的依据的是不同编程语言的代码规则（Rule），为了方便通常把一组规则组合到一起，称为质量配置（Quality Profile ）。</li>
+<li>如果审查结果不满足质量门（Quality Gate），则会判定本次审查失败，可以利用这个特性配合 CI 工具实现自动化机器审查。</li>
+<li>针对每个项目（Project），可以设置不同的质量配置（Quality Profile）、质量门（Quality Gate）、授权验证（Token），当然也可以使用默认配置。</li>
+<li>项目（Project）的一次审查将会生成一个质量快照（Snapshot），快照包含了审查问题以及其对应的修复成本（Remediation Cost）和技术债务（Technical Debt），修复成本和技术债务是在规则（Rule）中预定义的，并不是 AI 智能动态计算的，所以只是参考。</li>
 </ol>
+<h1 id="写在最后">3. 写在最后</h1><p>在动手之前，建议花点时间去理解上面的介绍内容，能够更好的帮助你去使用 Sonarqube。</p>
 
     </div>
 
@@ -367,11 +365,14 @@
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/2022/01/07/Sonarqube%E7%B3%BB%E5%88%9701%EF%BC%9ASonarqube%E7%AE%80%E4%BB%8B%E5%8F%8A%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/" rel="prev" title="Sonarqube系列01：Sonarqube 简介及安装">
-                  <i class="fa fa-chevron-left"></i> Sonarqube系列01：Sonarqube 简介及安装
+                <a href="/2022/05/23/tcp-exception-read/" rel="prev" title="TCP 机制引发设备状态异常解读">
+                  <i class="fa fa-chevron-left"></i> TCP 机制引发设备状态异常解读
                 </a>
             </div>
             <div class="post-nav-item">
+                <a href="/2022/01/07/Sonarqube%E7%B3%BB%E5%88%9701%EF%BC%9ASonarqube%E7%AE%80%E4%BB%8B%E5%8F%8A%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/" rel="next" title="Sonarqube系列01：Sonarqube 简介及安装">
+                  Sonarqube系列01：Sonarqube 简介及安装 <i class="fa fa-chevron-right"></i>
+                </a>
             </div>
           </div>
     </footer>
