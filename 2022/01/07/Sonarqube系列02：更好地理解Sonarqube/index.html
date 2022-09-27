@@ -20,26 +20,30 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"ethan-jo.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.13.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":{"enable":true,"style":"mac"},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="这里是 Ethan Jo 原创个人技术博客。专注于Java后端开发、运维工程化、软件工程师职业发展，致力于成为架构师。">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Ethan Jo&#39;s Tech Blog">
-<meta property="og:url" content="https://ethan-jo.github.io/index.html">
+    <meta name="description" content="在开始具体代码的质量分析之前，还需要理解 Sonarqube 的工作流程才能更好的使用它。在这章内容中将详细介绍它的工作原理以及理解所需的概念。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Sonarqube系列01：Sonarqube 简介及安装">
+<meta property="og:url" content="https://ethan-jo.github.io/2022/01/07/Sonarqube%E7%B3%BB%E5%88%9702%EF%BC%9A%E6%9B%B4%E5%A5%BD%E5%9C%B0%E7%90%86%E8%A7%A3Sonarqube/index.html">
 <meta property="og:site_name" content="Ethan Jo&#39;s Tech Blog">
-<meta property="og:description" content="这里是 Ethan Jo 原创个人技术博客。专注于Java后端开发、运维工程化、软件工程师职业发展，致力于成为架构师。">
+<meta property="og:description" content="在开始具体代码的质量分析之前，还需要理解 Sonarqube 的工作流程才能更好的使用它。在这章内容中将详细介绍它的工作原理以及理解所需的概念。">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ethan-jo.github.io/assets/img-1.png">
+<meta property="article:published_time" content="2022-01-07T14:55:10.000Z">
+<meta property="article:modified_time" content="2022-01-07T14:55:10.000Z">
 <meta property="article:author" content="Ethan Jo">
-<meta property="article:tag" content="架构技术,Java后端技术,架构之路">
+<meta property="article:tag" content="Sonarqube">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ethan-jo.github.io/assets/img-1.png">
 
 
-<link rel="canonical" href="https://ethan-jo.github.io/">
+<link rel="canonical" href="https://ethan-jo.github.io/2022/01/07/Sonarqube%E7%B3%BB%E5%88%9702%EF%BC%9A%E6%9B%B4%E5%A5%BD%E5%9C%B0%E7%90%86%E8%A7%A3Sonarqube/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":true,"isPost":false,"lang":"zh-CN","comments":"","permalink":"","path":"index.html","title":""}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://ethan-jo.github.io/2022/01/07/Sonarqube%E7%B3%BB%E5%88%9702%EF%BC%9A%E6%9B%B4%E5%A5%BD%E5%9C%B0%E7%90%86%E8%A7%A3Sonarqube/","path":"2022/01/07/Sonarqube系列02：更好地理解Sonarqube/","title":"Sonarqube系列01：Sonarqube 简介及安装"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>Ethan Jo's Tech Blog</title>
+<title>Sonarqube系列01：Sonarqube 简介及安装 | Ethan Jo's Tech Blog</title>
   
 
   <script src="/js/third-party/analytics/baidu-analytics.js"></script>
@@ -72,7 +76,7 @@
 
     <a href="/" class="brand" rel="start">
       <i class="logo-line"></i>
-      <h1 class="site-title">Ethan Jo's Tech Blog</h1>
+      <p class="site-title">Ethan Jo's Tech Blog</p>
       <i class="logo-line"></i>
     </a>
       <p class="site-subtitle" itemprop="description">云水一舟天地间</p>
@@ -105,7 +109,7 @@
 
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-overview-active">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           文章目录
@@ -118,6 +122,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="nav-text">1. 工作原理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E7%BB%84%E4%BB%B6%E5%9B%BE"><span class="nav-text">1.1. 系统组件图</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%90%86%E8%A7%A3%E8%A6%81%E7%82%B9"><span class="nav-text">1.2. 理解要点</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A6%82%E5%BF%B5"><span class="nav-text">2. 概念</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5"><span class="nav-text">2.1. 核心概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%90%86%E8%A7%A3%E6%A6%82%E5%BF%B5"><span class="nav-text">2.2. 理解概念</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -171,227 +176,17 @@
 </noscript>
 
 
-    <div class="main-inner index posts-expand">
+    <div class="main-inner post posts-expand">
 
-    
+
+  
 
 
 <div class="post-block">
   
   
 
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://ethan-jo.github.io/2022/05/23/tcp-exception-read/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="Ethan Jo">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Ethan Jo's Tech Blog">
-      <meta itemprop="description" content="这里是 Ethan Jo 原创个人技术博客。专注于Java后端开发、运维工程化、软件工程师职业发展，致力于成为架构师。">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Ethan Jo's Tech Blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/05/23/tcp-exception-read/" class="post-title-link" itemprop="url">TCP 机制引发设备状态异常解读</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2022-05-23 22:55:10" itemprop="dateCreated datePublished" datetime="2022-05-23T22:55:10+08:00">2022-05-23</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-05-24 22:55:10" itemprop="dateModified" datetime="2022-05-24T22:55:10+08:00">2022-05-24</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E5%B7%A5%E4%BD%9C%E6%97%A5%E5%BF%97/" itemprop="url" rel="index"><span itemprop="name">工作日志</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>1.8k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>2 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="问题背景">1. 问题背景</h1><p>最近碰到一个有趣的问题：</p>
-<blockquote>
-<p>为测试极端情况下程序的健壮性，把 TCP 通信的设备拔掉网线&#x2F;断开电源后，连接程序并不能马上报警提示设备已断开，而是要过一段时间（经统计，大概为 15 分钟）才能断开，测试的系统是 Linux，发行版为 CentOS 7.9。 </p>
-</blockquote>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/05/23/tcp-exception-read/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://ethan-jo.github.io/2022/01/07/Sonarqube%E7%B3%BB%E5%88%9701%EF%BC%9ASonarqube%E7%AE%80%E4%BB%8B%E5%8F%8A%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="Ethan Jo">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Ethan Jo's Tech Blog">
-      <meta itemprop="description" content="这里是 Ethan Jo 原创个人技术博客。专注于Java后端开发、运维工程化、软件工程师职业发展，致力于成为架构师。">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Ethan Jo's Tech Blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/01/07/Sonarqube%E7%B3%BB%E5%88%9701%EF%BC%9ASonarqube%E7%AE%80%E4%BB%8B%E5%8F%8A%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/" class="post-title-link" itemprop="url">Sonarqube系列01：Sonarqube 简介及安装</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2022-01-07 22:55:10" itemprop="dateCreated datePublished" datetime="2022-01-07T22:55:10+08:00">2022-01-07</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Devops/" itemprop="url" rel="index"><span itemprop="name">Devops</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>4.4k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>4 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="Sonarqube-简介">1. Sonarqube 简介</h1><p>Sonarqube 是一个开源的自动代码审查工具，可以系统化地帮助用户交付干净的代码。用户可以将 Sonarqube 集成到 CI 流水线和 DevOps 平台，实现对项目代码进行持续的代码检查。</p>
-<blockquote>
-<p>Sonarqube 官网: <a target="_blank" rel="noopener" href="http://www.sonar.org.cn/">http://www.sonar.org.cn/</a></p>
-</blockquote>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/01/07/Sonarqube%E7%B3%BB%E5%88%9701%EF%BC%9ASonarqube%E7%AE%80%E4%BB%8B%E5%8F%8A%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://ethan-jo.github.io/2022/01/07/Sonarqube%E7%B3%BB%E5%88%9702%EF%BC%9A%E6%9B%B4%E5%A5%BD%E5%9C%B0%E7%90%86%E8%A7%A3Sonarqube/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -405,13 +200,13 @@
     </span>
 
     <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Ethan Jo's Tech Blog">
+      <meta itemprop="name" content="Sonarqube系列01：Sonarqube 简介及安装 | Ethan Jo's Tech Blog">
       <meta itemprop="description" content="">
     </span>
       <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/01/07/Sonarqube%E7%B3%BB%E5%88%9702%EF%BC%9A%E6%9B%B4%E5%A5%BD%E5%9C%B0%E7%90%86%E8%A7%A3Sonarqube/" class="post-title-link" itemprop="url">Sonarqube系列01：Sonarqube 简介及安装</a>
-        </h2>
+        <h1 class="post-title" itemprop="name headline">
+          Sonarqube系列01：Sonarqube 简介及安装
+        </h1>
 
         <div class="post-meta-container">
           <div class="post-meta">
@@ -457,16 +252,106 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>在开始具体代码的质量分析之前，还需要理解 Sonarqube 的工作流程才能更好的使用它。在这章内容中将详细介绍它的工作原理以及理解所需的概念。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/01/07/Sonarqube%E7%B3%BB%E5%88%9702%EF%BC%9A%E6%9B%B4%E5%A5%BD%E5%9C%B0%E7%90%86%E8%A7%A3Sonarqube/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
+        <p>在开始具体代码的质量分析之前，还需要理解 Sonarqube 的工作流程才能更好的使用它。在这章内容中将详细介绍它的工作原理以及理解所需的概念。</p>
+<span id="more"></span>
+<h1 id="工作原理">1. 工作原理</h1><h2 id="系统组件图">1.1. 系统组件图</h2><p><img data-src="/assets/img-1.png" alt="e31c17be8396dd3e1cf76502e3d654f3.png"><br>Sonarqube 实例包括三个组件：</p>
+<ol>
+<li>Sonarqube server 提供质量管理服务，主要包括：<ul>
+<li>Web Server 用来提供用户界面</li>
+<li>Search Server 基于 ES 的搜索服务</li>
+<li>Compute Engine 负责处理代码分析报告，并将其保存在数据库中的计算引擎</li>
+</ul>
+</li>
+<li>Database Server 存储数据：<ul>
+<li>代码扫描期间生成的代码质量和安全性指标和问题</li>
+<li>Sonarqube 实例配置 （规则、质量阀、用户、权限、项目等）</li>
+</ul>
+</li>
+<li>Scanner 扫描分析代码问题</li>
+</ol>
+<h2 id="理解要点">1.2. 理解要点</h2><p>下面是一些理解要点，可以帮助你更好的理解 Sonarqube 是如何工作的。</p>
+<ol>
+<li>具备扫描能力的是 Scanner，Scanner 通过 HTTP&#x2F;HTTPS 协议获取 Sonarqube  Server 配置的审查规则，在本地进行代码扫描并生成分析报告，然后将报告上传至 Sonarqube Server 计算。</li>
+<li>Sonarqube Server  接收到报告后进行报告解析，汇聚成各个维度的分析数据生成一个 Snapshot 并存储，用户可以通过 Web 界面查看对应的代码审查 Snapshot。</li>
+<li>Sonarqube 提供多种形式的 Scanner 便于不同语言开发者使用，包括 1 个通用的 CLI 工具： SonarScanner，以及匹配不同 CI 工具、语言的适配版本（Gradle、. NET、Maven、Jenkins、Azure DevOps、Ant 等）。</li>
+<li>基于要点 1，可以使用三方代码分析工具进行分析并将其报告转换成 Sonarqube 报告格式，再通过 SonarScanner 上传，实现整合三方工具结果。</li>
+<li>Scanner 提供了丰富的参数定制分析过程满足个性化需求，例如如下几个场景：<ul>
+<li><code>sonar.qualitygate.wait=true</code> 实现 Scanner 等待 Sonarqube Server 返回质量阀比对结果</li>
+<li><code>sonar.externalIssuesReportPaths</code> 指定待三方报告路径</li>
+<li><code>sonar.exclusions</code> 排除待检查的目录</li>
+</ul>
+</li>
+</ol>
+<h1 id="概念">2. 概念</h1><p>在工作原理介绍中使用了一些概念术语，在 Sonarqube 的使用过程中需要理解这些关键性概念。</p>
+<h2 id="核心概念">2.1. 核心概念</h2><table>
+<thead>
+<tr>
+<th>概念</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Bug</td>
+<td>错误，指代码中出现的错误，可靠性维度</td>
+</tr>
+<tr>
+<td>Vulnerability</td>
+<td>漏洞，指代码中出现的后门，安全维度</td>
+</tr>
+<tr>
+<td>Code Smell</td>
+<td>代码异味，指使维护人员修改代码更加困难的用法实现，可维护性维度</td>
+</tr>
+<tr>
+<td>Security Hotspot</td>
+<td>安全热点，指需要人工复审确认是否存在安全风险，安全维度</td>
+</tr>
+<tr>
+<td>Technical Debt</td>
+<td>技术债务，指修复所有「Code Smell」所需的预估时间</td>
+</tr>
+<tr>
+<td>Remediation Cost</td>
+<td>修复成本，指修复「Bug」「Vulnerability」问题所需的预估时间</td>
+</tr>
+<tr>
+<td>Rule</td>
+<td>代码规则，应遵循的编码标准或实践。不遵守编码规则会导致错误、漏洞、安全热点和代码异味</td>
+</tr>
+<tr>
+<td>Quality Profile</td>
+<td>质量配置，一组代码规则，每个「Snapshot」都基于一个质量配置</td>
+</tr>
+<tr>
+<td>Snapshot</td>
+<td>质量快照，在特定时间对特定项目的代码质量问题一次审查结果</td>
+</tr>
+<tr>
+<td>Quality Gate</td>
+<td>质量阈或质量门，衡量代码审查结果的质量策略，达到「Quality Gate」要求表示待审查代码符合要求，支持两个维度：增量代码、全量代码</td>
+</tr>
+<tr>
+<td>Project</td>
+<td>审查项目，与代码仓库一一对应，支持多分支</td>
+</tr>
+<tr>
+<td>Token</td>
+<td>审查项目时所用授权验证</td>
+</tr>
+<tr>
+<td>除此之外，还有其他的概念，可以查看<a target="_blank" rel="noopener" href="https://docs.sonarqube.org/8.9/user-guide/concepts/">这里</a>。</td>
+<td></td>
+</tr>
+</tbody></table>
+<h2 id="理解概念">2.2. 理解概念</h2><p>这里总结了一些对理解概念有帮助的要点，帮助你更好理解这些概念：</p>
+<ol>
+<li>Sonarqube 代码自动审查的问题类型主要包括：Bug、Vulnerability、Security Hotspot 、Code Smell 。</li>
+<li>审查问题的依据是根据编程语言设定的规则（Rule），为了方便通常把一组规则组合到一起称为质量配置（Quality Profile ）。</li>
+<li>如果审查结果不满足质量门（Quality Gate）的要求，则会判定审查结果失败，可以利用这个特性配合 CI 工具实现自动化机器审查。</li>
+<li>针对一个项目（Project），可以单独设置质量配置（Quality Profile）、质量门（Quality Gate）、授权验证（Token），当然也可以使用默认的配置。</li>
+<li>针对项目（Project）的一次扫描将会生成一个质量快照（Snapshot），快照包含了审查问题以及其对应的修复成本（Remediation Cost）和技术债务（Technical Debt），修复成本和技术债务是在规则（Rule）中预定义的，并不是 AI 智能动态计算的。</li>
+</ol>
+
     </div>
 
     
@@ -474,8 +359,21 @@
     
 
     <footer class="post-footer">
-        <div class="post-eof"></div>
-      
+          <div class="post-tags">
+              <a href="/tags/Sonarqube/" rel="tag"># Sonarqube</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/01/07/Sonarqube%E7%B3%BB%E5%88%9701%EF%BC%9ASonarqube%E7%AE%80%E4%BB%8B%E5%8F%8A%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/" rel="prev" title="Sonarqube系列01：Sonarqube 简介及安装">
+                  <i class="fa fa-chevron-left"></i> Sonarqube系列01：Sonarqube 简介及安装
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
     </footer>
   </article>
 </div>
@@ -484,6 +382,8 @@
 
 
 
+
+    <div class="comments utterances-container"></div>
 </div>
   </main>
 
